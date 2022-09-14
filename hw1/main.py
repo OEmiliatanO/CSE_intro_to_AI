@@ -1,40 +1,70 @@
-from random import randint
-import pygame
+from Bird import Bird
+import tkinter
+import random
+import math
 
-class Bird(pg.sprite.Sprite):
-	def __init__(self, canv, scope = 50):
-		super().__init__()
-		self.canv = canv
-		self.image = pygame.Surface((15, 15))
-		Color = pg.Color(randint(0,255), randint(0,255), randint(0,255))
-		pygame.draw.polygon(self.image, Color, ((0,0),(0,3),(1.5,1.5),(3,1.5)))
-		Width, Height = self.canv.get_size()
-		self.angle = randint(0, 360)
-		self.v = pygame.Vector2(math.cos(self.angle * math.pi / 180), math.sin(self.angle * math.pi / 180))
-		self.rect = self.image.get_rect(center = (randint(20, Width - 20), randint(20, Height - 20)))
-		self.pos = pygame.Vector2(self.rect.cent)
-		self.scope = scope
-	def update(self, birdslist, dt):
-		Width, Height = self.canv.get_size()
+def sep(this, others):
+	d = 1000000000
+	nearest = None
+	for other in others:
+		if this.dist(other) < d:
+			nearest = other
+	if nearest != None:
+		dangle = math.atan2(nearest.y - this.y, nearest.x - this.x)
+		this.angle -= 0.01 * dangle
 
+def alig(this, others):
+	avg_ang = 0
+	for other in others:
+		avg_ang += other.angle
+	avg_ang /= len(others)
+	this.angle += 0.1 * (avg_ang - this.angle)
+
+def cohen(this, others):
+	avg_x = 0
+	avg_y = 0
+	for other in others:
+		avg_x += other.x
+		avg_y += other.y
+	avg_x /= len(others)
+	avg_y /= len(others)
+	this.angle -= 0.02 * math.atan2(avg_y, avg_x)
+
+def run(birds, canv, dt, field):
+	for this in birds:
+		insight = []
+		for other in birds:
+			if this == other:
+				continue
+			elif 0 < this.dist(other) < this.scope:
+				insight.append(other)
+
+		if insight == None or len(insight) == 0:
+			this.ax = -this.vx * 0.8
+			this.ay = -this.vy * 0.8
+		else:
+			sep(this, insight)
+			alig(this, insight)
+			cohen(this, insight)
+
+	for this in birds:
+		this.fly(canv, dt, field[0], field[1])
+
+	canv.after(int(dt * 1000), run, birds, canv, dt, field)
 
 def main():
-	pygame.init()
-	width, height = 900, 900
-	pygame.display.set_caption("boids")
-	screen = pygame.display.set_mode((width, height), pygame.RESIZEABLE)
-	dt = 0.0001
+	screen_size = (2000, 1000)
+	n = 100
+	scope = 80
+	dt = 0.01#s
+	window = tkinter.Tk()
+	
+	canv = tkinter.Canvas(window, bg = "black", width = screen_size[0], height = screen_size[1])
+	canv.pack()
+	
+	birds = [Bird("B" + str(i), scope, screen_size) for i in range(n)]
+	run(birds, canv, dt, screen_size)
+	window.mainloop()
 
-	birdgp = pygame.sprite.Group()
-	for i in range(n):
-		birdgp.add(Bird(screen))
-	birdslist = birdgp.sprites()
-	while True:
-		screen.fill((0, 0, 0))
-		birdgp.update(birdslist, dt)
-		birdgp.draw(screen)
-		birdgp.display.update()
-
-if __name__ == '__main__':
+if __name__ == "__main__":
 	main()
-	pygame.quit()
