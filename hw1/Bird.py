@@ -9,8 +9,8 @@ class Bird:
 		self.angle = random.uniform(0.0, 2.0 * math.pi)
 		self.vx = math.cos(self.angle)
 		self.vy = math.sin(self.angle)
-		self.base_speed = random.randint(400, 500)
-		self.scope = scope
+		self.base_speed = random.randint(300, 500)
+		self.scope = random.randint(10, 150)
 		self.name = name
 		self.color = "#" + ("%06x" % random.randint(0, 16777215))
 		

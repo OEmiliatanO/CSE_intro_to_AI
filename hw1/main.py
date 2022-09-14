@@ -11,7 +11,7 @@ def sep(this, others):
 			nearest = other
 	if nearest != None:
 		dangle = math.atan2(nearest.y - this.y, nearest.x - this.x)
-		this.angle -= 0.01 * dangle
+		this.angle -= 0.013 * dangle
 
 def alig(this, others):
 	avg_ang = 0
@@ -54,10 +54,11 @@ def run(birds, canv, dt, field):
 
 def main():
 	screen_size = (2000, 1000)
-	n = 100
-	scope = 80
+	n = 150
+	scope = 30
 	dt = 0.01#s
 	window = tkinter.Tk()
+	window.title("Boids")
 	
 	canv = tkinter.Canvas(window, bg = "black", width = screen_size[0], height = screen_size[1])
 	canv.pack()
