@@ -29,7 +29,7 @@ def alig(this, others):
 	for other in others:
 		avg_ang += other.angle
 	avg_ang /= len(others)
-	this.angle += 0.2 * (avg_ang - this.angle)
+	this.angle += 0.5 * (avg_ang - this.angle)
 
 def cohen(this, others):
 	avg_x = 0
