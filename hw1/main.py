@@ -1,9 +1,11 @@
 from Bird import Bird
 import tkinter
 import random
+import numpy
 import math
 
 def sep(this, others):
+	"""
 	d = 1000000000
 	nearest = None
 	for other in others:
@@ -12,13 +14,22 @@ def sep(this, others):
 	if nearest != None:
 		dangle = math.atan2(nearest.y - this.y, nearest.x - this.x)
 		this.angle -= 0.013 * dangle
+	"""
+	avg_x = 0
+	avg_y = 0
+	for other in others:
+		avg_x += other.x
+		avg_y += other.y
+	avg_x /= len(others)
+	avg_y /= len(others)
+	this.angle -= 0.013 * math.atan2(avg_y - this.y, avg_x - this.x)
 
 def alig(this, others):
 	avg_ang = 0
 	for other in others:
 		avg_ang += other.angle
 	avg_ang /= len(others)
-	this.angle += 0.1 * (avg_ang - this.angle)
+	this.angle += 0.2 * (avg_ang - this.angle)
 
 def cohen(this, others):
 	avg_x = 0
@@ -28,7 +39,7 @@ def cohen(this, others):
 		avg_y += other.y
 	avg_x /= len(others)
 	avg_y /= len(others)
-	this.angle -= 0.02 * math.atan2(avg_y, avg_x)
+	this.angle -= 0.07 * math.atan2(avg_y, avg_x)
 
 def run(birds, canv, dt, field):
 	for this in birds:
@@ -54,7 +65,7 @@ def run(birds, canv, dt, field):
 
 def main():
 	screen_size = (1900, 1000)
-	n = 150
+	n = 100
 	scope = 30
 	dt = 0.01#s
 	window = tkinter.Tk()

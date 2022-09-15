@@ -1,5 +1,6 @@
 import math
 import tkinter
+import numpy
 import random
 
 class Bird:
@@ -9,8 +10,8 @@ class Bird:
 		self.angle = random.uniform(0.0, 2.0 * math.pi)
 		self.vx = math.cos(self.angle)
 		self.vy = math.sin(self.angle)
-		self.base_speed = random.randint(300, 500)
-		self.scope = random.randint(10, 150)
+		self.base_speed = random.randint(200, 500)
+		self.scope = numpy.random.normal(100, 60)
 		self.name = name
 		self.color = "#" + ("%06x" % random.randint(0, 16777215))
 		
