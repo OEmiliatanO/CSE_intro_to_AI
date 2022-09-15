@@ -53,7 +53,7 @@ def run(birds, canv, dt, field):
 	canv.after(int(dt * 1000), run, birds, canv, dt, field)
 
 def main():
-	screen_size = (2000, 1000)
+	screen_size = (1900, 1000)
 	n = 150
 	scope = 30
 	dt = 0.01#s
