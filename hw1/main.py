@@ -4,60 +4,66 @@ import random
 import numpy
 import math
 
-def sep(this, others):
+def sep(this, avg_x, avg_y):
 	"""
-	d = 1000000000
-	nearest = None
+	avg_x, avg_y = 0, 0
 	for other in others:
-		if this.dist(other) < d:
-			nearest = other
-	if nearest != None:
-		dangle = math.atan2(nearest.y - this.y, nearest.x - this.x)
-		this.angle -= 0.013 * dangle
-	"""
-	avg_x = 0
-	avg_y = 0
-	for other in others:
-		avg_x += other.x
-		avg_y += other.y
+		if this.dist(other) < miniDist:
+			avg_x += other.x
+			avg_y += other.y
 	avg_x /= len(others)
 	avg_y /= len(others)
-	this.angle -= 0.013 * math.atan2(avg_y - this.y, avg_x - this.x)
+	angle = math.atan2(avg_y - this.y, avg_x - this.x)
+	this.angle += 0.03 * (math.pi + angle - this.angle)
+	this.base_speed += 0.05 / math.sqrt((avg_x - this.x) * (avg_x - this.x) + (avg_y - this.y) * (avg_y - this.y))
+	"""
+	this.angle -= 0.014 * math.atan2(avg_y - this.y, avg_x - this.x)
+	"""
+	this.base_speed += 0.03 / math.sqrt((this.x - avg_x)*(this.x - avg_x) + (this.y - avg_y)*(this.y - avg_y))
+	maxspeed = 500
+	if this.base_speed > maxspeed:
+		this.bae_speed = (maxspeed / this.base_speed) * maxspeed
+	"""
 
-def alig(this, others):
-	avg_ang = 0
-	for other in others:
-		avg_ang += other.angle
-	avg_ang /= len(others)
-	this.angle += 0.5 * (avg_ang - this.angle)
+def alig(this, avg_ang):
+	this.angle += 0.86 * (avg_ang - this.angle)
 
-def cohen(this, others):
-	avg_x = 0
-	avg_y = 0
-	for other in others:
-		avg_x += other.x
-		avg_y += other.y
-	avg_x /= len(others)
-	avg_y /= len(others)
-	this.angle -= 0.07 * math.atan2(avg_y, avg_x)
+def cohen(this, avg_x, avg_y):
+	this.angle -= 0.034 * (math.atan2(avg_y - this.y, avg_x - this.x))
+	"""this.base_speed += 0.01 * math.sqrt((this.x - avg_x)*(this.x - avg_x) + (this.y - avg_y)*(this.y - avg_y))
+	maxspeed = 500
+	if this.base_speed > maxspeed:
+		this.base_speed = (maxspeed / this.base_speed) * maxspeed"""
+
+def bias(this):
+	bias_v = 0.07
+	if random.randint(0, 100) > 80:
+		this.angle += bias_v * random.choice([-1, 1])
 
 def run(birds, canv, dt, field):
 	for this in birds:
-		insight = []
+		cnt = 0
+		avg_x = 0
+		avg_y = 0
+		avg_ang = 0
 		for other in birds:
 			if this == other:
 				continue
 			elif 0 < this.dist(other) < this.scope:
-				insight.append(other)
+				cnt += 1
+				avg_x += other.x
+				avg_y += other.y
+				avg_ang += other.angle
 
-		if insight == None or len(insight) == 0:
-			this.ax = -this.vx * 0.8
-			this.ay = -this.vy * 0.8
-		else:
-			sep(this, insight)
-			alig(this, insight)
-			cohen(this, insight)
-
+		if cnt > 0:
+			avg_x /= cnt
+			avg_y /= cnt
+			avg_ang /= cnt
+			sep(this, avg_x, avg_y)
+			alig(this, avg_ang)
+			cohen(this, avg_x, avg_y)
+			bias(this)
+	
 	for this in birds:
 		this.fly(canv, dt, field[0], field[1])
 

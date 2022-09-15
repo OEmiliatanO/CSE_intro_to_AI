@@ -2,32 +2,39 @@ import math
 import tkinter
 import numpy
 import random
+import time
 
 class Bird:
 	def __init__(self, name, scope, field = (900, 900)):
+		random.seed(time.time())
 		self.x = random.randint(10, field[0] - 10)
 		self.y = random.randint(10, field[1] - 10)
-		self.angle = random.uniform(math.pi, 3 * math.pi / 2)
-		self.vx = math.cos(self.angle)
-		self.vy = math.sin(self.angle)
-		self.base_speed = numpy.random.normal(500, 30)
-		self.scope = numpy.random.normal(60, 30)
-		self.perf = random.choice([-1, 1])
+		self.vx = random.choice([-1, 1]) * random.randint(100, 300)
+		self.vy = random.choice([-1, 1]) * random.randint(100, 300)
+		self.angle = math.atan2(self.vy, self.vx)
+		self.scope = numpy.random.normal(80, 30)
 		self.name = name
 		self.color = "#" + ("%06x" % random.randint(0, 16777215))
 		
 	def draw(self, canv, scale = 11):
+		self.angle = math.atan2(self.vy, self.vx)
 		arx = self.x + scale * math.cos(self.angle)
 		ary = self.y + scale * math.sin(self.angle)
 		canv.create_line(self.x, self.y, arx, ary, fill = self.color, arrow='last', tag = self.name)
 
 	def fly(self, canv, dt, boundaryx, boundaryy):
-		self.vx = self.base_speed * math.cos(self.angle)
-		self.vy = self.base_speed * math.sin(self.angle)
+		speed = math.sqrt(self.vx * self.vx + self.vy * self.vy)
+		minspeed = 100
+		maxspeed = 600
+		if speed > maxspeed:
+			self.vx = (self.vx / speed) * maxspeed
+			self.vy = (self.vy / speed) * maxspeed
+		if speed < minspeed:
+			self.vx = (1 + self.vx / speed) * minspeed
+			self.vy = (1 + self.vy / speed) * minspeed
 		self.x += self.vx * dt
 		self.y += self.vy * dt
-		self.x %= boundaryx
-		self.y %= boundaryy
+		print(self.name + " v=(%d, %d)" % (self.vx, self.vy))
 		canv.delete(self.name)
 		self.draw(canv)
 	
