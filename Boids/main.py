@@ -5,35 +5,13 @@ import numpy
 import math
 
 def sep(this, avg_x, avg_y):
-	"""
-	avg_x, avg_y = 0, 0
-	for other in others:
-		if this.dist(other) < miniDist:
-			avg_x += other.x
-			avg_y += other.y
-	avg_x /= len(others)
-	avg_y /= len(others)
-	angle = math.atan2(avg_y - this.y, avg_x - this.x)
-	this.angle += 0.03 * (math.pi + angle - this.angle)
-	this.base_speed += 0.05 / math.sqrt((avg_x - this.x) * (avg_x - this.x) + (avg_y - this.y) * (avg_y - this.y))
-	"""
 	this.angle -= 0.014 * math.atan2(avg_y - this.y, avg_x - this.x)
-	"""
-	this.base_speed += 0.03 / math.sqrt((this.x - avg_x)*(this.x - avg_x) + (this.y - avg_y)*(this.y - avg_y))
-	maxspeed = 500
-	if this.base_speed > maxspeed:
-		this.bae_speed = (maxspeed / this.base_speed) * maxspeed
-	"""
 
 def alig(this, avg_ang):
 	this.angle += 0.86 * (avg_ang - this.angle)
 
 def cohen(this, avg_x, avg_y):
 	this.angle -= 0.034 * (math.atan2(avg_y - this.y, avg_x - this.x))
-	"""this.base_speed += 0.01 * math.sqrt((this.x - avg_x)*(this.x - avg_x) + (this.y - avg_y)*(this.y - avg_y))
-	maxspeed = 500
-	if this.base_speed > maxspeed:
-		this.base_speed = (maxspeed / this.base_speed) * maxspeed"""
 
 def bias(this):
 	bias_v = 0.07
