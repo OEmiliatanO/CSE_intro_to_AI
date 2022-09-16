@@ -4,14 +4,14 @@ import random
 import numpy
 import math
 
-def sep(this, others, miniDist = 60):
+def sep(this, others, miniDist = 30):
 	dx, dy = 0, 0
 	for other in others:
 		if this.dist(other) < miniDist:
 			dx += (this.x - other.x)
 			dy += (this.y - other.y)
-	this.vx += dx * 0.05
-	this.vy += dy * 0.05
+	this.vx += dx * 0.08
+	this.vy += dy * 0.08
 
 def alig(this, others):
 	avg_vx = 0
@@ -21,8 +21,8 @@ def alig(this, others):
 		avg_vy += other.vy
 	avg_vx /= len(others)
 	avg_vy /= len(others)
-	this.vx += (avg_vx - this.vx) * 0.05
-	this.vy += (avg_vy - this.vy) * 0.05
+	this.vx += (avg_vx - this.vx) * 0.2
+	this.vy += (avg_vy - this.vy) * 0.2
 
 def cohen(this, others):
 	avg_x = 0
@@ -32,11 +32,11 @@ def cohen(this, others):
 		avg_y += other.y
 	avg_x /= len(others)
 	avg_y /= len(others)
-	this.vx += (avg_x - this.x) * 0.0005
-	this.vy += (avg_y - this.y) * 0.0005
+	this.vx += (avg_x - this.x) * 0.04
+	this.vy += (avg_y - this.y) * 0.04
 
 def bias(this):
-	bias_v = 0.001 + random.uniform(0, 0.01)
+	bias_v = 0.04
 	if numpy.random.randint(0, 100) >= 80:
 		this.vx = (1 - bias_v) * this.vx + bias_v * random.choice([-1, 1])
 		this.vy = (1 - bias_v) * this.vy + bias_v * random.choice([-1, 1])
@@ -58,24 +58,16 @@ def run(birds, canv, dt, field):
 			alig(this, insight)
 			cohen(this, insight)
 			bias(this)
-			turn_v = 100
-			margin = 500
+			turn_v = 40
+			margin = 100
 			if this.x < margin:
 				this.vx += turn_v
-				print(this.name + " cross left margin")
-				print(this.vx, this.vy)
 			if this.y < margin:
 				this.vy += turn_v
-				print(this.name + " cross top margin")
-				print(this.vx, this.vy)
 			if this.x > field[0] - margin:
 				this.vx -= turn_v
-				print(this.name + " cross right margin")
-				print(this.vx, this.vy)
 			if this.y > field[1] - margin:
 				this.vy -= turn_v
-				print(this.name + " cross bottom margin")
-				print(this.vx, this.vy)
 
 	for this in birds:
 		this.fly(canv, dt, field[0], field[1])
@@ -85,7 +77,7 @@ def run(birds, canv, dt, field):
 def main():
 	screen_size = (1900, 1000)
 	n = 100
-	scope = 30
+	scope = 65
 	dt = 0.01#s
 	window = tkinter.Tk()
 	window.title("Boids")

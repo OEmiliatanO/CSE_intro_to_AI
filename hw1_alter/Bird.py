@@ -9,10 +9,10 @@ class Bird:
 		random.seed(time.time())
 		self.x = random.randint(10, field[0] - 10)
 		self.y = random.randint(10, field[1] - 10)
-		self.vx = random.choice([-1, 1]) * random.randint(100, 300)
-		self.vy = random.choice([-1, 1]) * random.randint(100, 300)
+		self.vx = random.choice([-1, 1]) * 300
+		self.vy = random.choice([-1, 1]) * 300
 		self.angle = math.atan2(self.vy, self.vx)
-		self.scope = numpy.random.normal(80, 30)
+		self.scope = scope
 		self.name = name
 		self.color = "#" + ("%06x" % random.randint(0, 16777215))
 		
@@ -24,17 +24,18 @@ class Bird:
 
 	def fly(self, canv, dt, boundaryx, boundaryy):
 		speed = math.sqrt(self.vx * self.vx + self.vy * self.vy)
-		minspeed = 100
+		minspeed = 400
 		maxspeed = 600
 		if speed > maxspeed:
 			self.vx = (self.vx / speed) * maxspeed
 			self.vy = (self.vy / speed) * maxspeed
 		if speed < minspeed:
-			self.vx = (1 + self.vx / speed) * minspeed
-			self.vy = (1 + self.vy / speed) * minspeed
+			self.vx = (self.vx / speed) * minspeed
+			self.vy = (self.vy / speed) * minspeed
 		self.x += self.vx * dt
 		self.y += self.vy * dt
-		print(self.name + " v=(%d, %d)" % (self.vx, self.vy))
+		self.x %= boundaryx
+		self.y %= boundaryy
 		canv.delete(self.name)
 		self.draw(canv)
 	
