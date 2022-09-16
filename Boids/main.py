@@ -5,16 +5,6 @@ import numpy
 import math
 
 def sep(this, others):
-	"""
-	d = 1000000000
-	nearest = None
-	for other in others:
-		if this.dist(other) < d:
-			nearest = other
-	if nearest != None:
-		dangle = math.atan2(nearest.y - this.y, nearest.x - this.x)
-		this.angle -= 0.013 * dangle
-	"""
 	avg_x = 0
 	avg_y = 0
 	for other in others:
@@ -50,10 +40,7 @@ def run(birds, canv, dt, field):
 			elif 0 < this.dist(other) < this.scope:
 				insight.append(other)
 
-		if insight == None or len(insight) == 0:
-			this.ax = -this.vx * 0.8
-			this.ay = -this.vy * 0.8
-		else:
+		if len(insight) > 0:
 			sep(this, insight)
 			alig(this, insight)
 			cohen(this, insight)
