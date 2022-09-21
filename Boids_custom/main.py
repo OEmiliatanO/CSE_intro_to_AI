@@ -21,18 +21,18 @@ def bias(this, bias_v = 0.04):
 		this.vx = (1 - bias_v) * this.vx + bias_v * random.choice([-1, 1])
 		this.vy = (1 - bias_v) * this.vy + bias_v * random.choice([-1, 1])
 
-def run(birds, canv, dt, field, scale_sep, scale_alig, scale_cohen, turn_v = 40, margin = 100, sepDist = 30):
+def run(birds, canv, dt, field, scale_sep, scale_alig, scale_cohen, turn_v = 40, margin = 100, sepDist = 20):
 	for this in birds:
 		avg_vx, avg_vy, avg_x, avg_y, dx, dy, cnt = 0, 0, 0, 0, 0, 0, 0
 		for other in birds:
 			dist = this.dist(other)
-			if 0 < dist < this.scope:
+			if 0 <= dist < this.scope:
 				avg_vx += other.vx
 				avg_vy += other.vy
 				avg_x += other.x
 				avg_y += other.y
 				cnt += 1
-				if dist <= sepDist:
+				if dist <= sepDist and other.name != this.name:
 					dx += (this.x - other.x)
 					dy += (this.y - other.y)
 
@@ -68,9 +68,9 @@ def run(birds, canv, dt, field, scale_sep, scale_alig, scale_cohen, turn_v = 40,
 	canv.after(int(dt * 1000), run, birds, canv, dt, field, scale_sep, scale_alig, scale_cohen)
 
 def main():
-	screen_size = (1900, 800)
+	screen_size = (1900, 950)
 	n = 150
-	scope = 65
+	scope = 70
 	dt = 0.01#s
 	window = tkinter.Tk()
 	window.title("Boids")
