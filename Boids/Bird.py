@@ -4,14 +4,17 @@ import numpy
 import random
 
 class Bird:
-	def __init__(self, name, scope, field = (900, 900)):
+	def __init__(self, name, scope, base_speed, field = (900, 900)):
+		#self.x = 450# + random.randint(0, 9)
 		self.x = random.randint(10, field[0] - 10)
+		#self.y = 450 + random.randint(0, 9)
 		self.y = random.randint(10, field[1] - 10)
+		#self.angle = math.pi
 		self.angle = random.uniform(0.0, 2.0 * math.pi)
 		self.vx = math.cos(self.angle)
 		self.vy = math.sin(self.angle)
-		self.base_speed = random.randint(200, 500)
-		self.scope = numpy.random.normal(100, 60)
+		self.base_speed = base_speed
+		self.scope = scope
 		self.name = name
 		self.color = "#" + ("%06x" % random.randint(0, 16777215))
 		
