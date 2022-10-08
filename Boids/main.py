@@ -54,6 +54,7 @@ def main():
 	screen_size = (1900, 1000)
 	n = 100
 	scope = 30
+	base_speed = 300
 	dt = 0.01#s
 	window = tkinter.Tk()
 	window.title("Boids")
@@ -61,7 +62,7 @@ def main():
 	canv = tkinter.Canvas(window, bg = "black", width = screen_size[0], height = screen_size[1])
 	canv.pack()
 	
-	birds = [Bird("B" + str(i), scope, screen_size) for i in range(n)]
+	birds = [Bird("B" + str(i), scope, base_speed, screen_size) for i in range(n)]
 	run(birds, canv, dt, screen_size)
 	window.mainloop()
 
