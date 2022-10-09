@@ -25,6 +25,8 @@ class Cell:
 			case 2|3:
 				if not self.isalive and n == 3:
 					self.nexAlive = True
+				if self.isalive:
+					self.nexAlive = self.isalive
 				return
 			case 4|5|6|7|8:
 				self.nexAlive = False

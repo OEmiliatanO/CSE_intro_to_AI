@@ -1,66 +1,85 @@
 import tkinter
 import random
+import sys
 from Cell import Cell
 
 shift = [(-1,-1),(-1,0),(-1,1),(0,-1), (0,1),(1,-1),(1,0),(1,1)]
 
-def run(Game, canv, width, height, dt = 0.001):
-	for x in range(width):
-		for y in range(height):
+def run(Game, canv, width, height, dt = 0.01):
+	for i in range(height):
+		for j in range(width):
 			n = 0
-			for dx, dy in shift:
-				nexx = x + dx
-				nexy = y + dy
-				if nexx < 0 or nexx >= width:
+			for di, dj in shift:
+				nexi = i + di
+				nexj = j + dj
+				if nexi < 0 or nexi >= height:
 					continue
-				if nexy < 0 or nexy >= height:
+				if nexj < 0 or nexj >= width:
 					continue
-				if Game[nexx][nexy].isalive:
+				if Game[nexi][nexj].isalive:
 					n += 1
-			Game[x][y].detect(n)
+			Game[i][j].detect(n)
 
-	for x in range(width):
-		for y in range(height):
-			Game[x][y].transform(canv)
-	"""
-	for x in range(width):
-		for y in range(height):
-			n = 0
-			for (dx, dy) in shift:
-				nexx = x + dx
-				print(x, nexx, "nx, dx =", dx)
-				nexy = y + dy
-				print(y, nexy, "ny, dy =", dy)
-				if nexx < 0 or nexx >= width:
-					continue
-				if nexy < 0 or nexy >= height:
-					continue
-				if Game[nexx][nexy].isalive:
-					print("nearby", x, y, nexx, nexy, "isalive, n=", n)
-					n += 1
-			print(x, y, " nearby:", n, " isalive:", Game[x][y].isalive)
-	"""
+	for i in range(height):
+		for j in range(width):
+			Game[i][j].transform(canv)
 
 	canv.after(int(dt * 1000), run, Game, canv, width, height)
 
 def main():
-	screen_size = (1000, 1000)
+	screen_size = (1920, 1080)
 	scale = 10
 	width = screen_size[0] // scale - 1
 	height = screen_size[1] // scale - 1
 	window = tkinter.Tk()
 	window.title('life game')
+	scrollbar = tkinter.Scrollbar(window)
+	scrollbar.pack(side = 'right', fill = 'y')
 	canv = tkinter.Canvas(window, bg = "black", width = screen_size[0], height = screen_size[1])
 	canv.pack()
 
 	Game = []
-	for x in range(width):
-		Game.append([])
-		for y in range(height):
-			Game[x].append(Cell(x, y))
-			if random.randint(0, 100) > 50:
-				Game[x][y].isalive = True
+	if sys.argv[1] == "random":
+		for i in range(height):
+			Game.append([])
+			for j in range(width):
+				Game[i].append(Cell(j, i))
+				if random.randint(0, 100) > 50:
+					Game[i][j].isalive = True
+	else:
+		f = open(sys.argv[1], 'r')
+		for i in range(height):
+			Game.append([])
+			s = f.readline()
+			for j in range(width):
+				Game[i].append(Cell(j, i))
+				if j >= len(s):
+					continue
+				if s[j] == '1':
+					Game[i][j].isalive = True
+		f.close()
 
+	for i in range(height):
+		for j in range(width):
+			Game[i][j].draw(canv)
+	"""
+	for i in range(height):
+		for j in range(width):
+			n = 0
+			for di, dj in shift:
+				nexi = i + di
+				nexj = j + dj
+				if nexi < 0 or nexi >= height:
+					continue
+				if nexj < 0 or nexj >= width:
+					continue
+				if Game[nexi][nexj].isalive:
+					n += 1
+			Game[i][j].detect(n)
+			if Game[i][j].isalive:
+				print(i, j, n)
+				print(i, j, Game[i][j].nexAlive)
+	"""
 	run(Game, canv, width, height)
 	window.mainloop()
 
