@@ -19,7 +19,6 @@ def sep(this, others, minidist = 30):
 	dd = math.atan2(avg_y - this.y, avg_x - this.x)
 	if dd < 0: dd += 2*math.pi
 	d = this.angle - dd
-	#print(this.name, "sep d:", d)
 	this.angle += 0.005 * d
 
 def alig(this, others):
@@ -27,7 +26,6 @@ def alig(this, others):
 	for other in others:
 		avg_ang += other.angle
 	avg_ang /= len(others)
-	#print(this.name, "avg_ang:", avg_ang)
 	this.angle -= 0.07 * (this.angle - avg_ang)
 
 def cohen(this, others):
@@ -38,19 +36,12 @@ def cohen(this, others):
 		avg_y += other.y
 	avg_x /= len(others)
 	avg_y /= len(others)
-	#print("avg_x, avg_y: ", avg_x, avg_y)
-	#print(this.name, "angle(before):", this.angle)
 	dd = math.atan2(avg_y - this.y, avg_x -this.x)
 	if dd < 0: dd += 2*math.pi
-	#print("dd:", dd)
 	d = this.angle - dd
-	#print(this.name, "x:", this.x, ", y", this.y)
-	#print(this.name, "cohen d:", d)
 	this.angle -= 0.015 * d
-	#print(this.name, "angle:", this.angle)
 
 def run(birds, canv, dt, field):
-	#print(birds[0].angle)
 	for this in birds:
 		insight = []
 		for other in birds:
