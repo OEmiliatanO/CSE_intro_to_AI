@@ -17,6 +17,7 @@ def sep(this, others, minidist = 30):
 	avg_x /= n
 	avg_y /= n
 	dd = math.atan2(avg_y - this.y, avg_x - this.x)
+	if dd < 0: dd += 2*math.pi
 	d = this.angle - dd
 	this.angle += 0.005 * d
 
@@ -36,6 +37,7 @@ def cohen(this, others):
 	avg_x /= len(others)
 	avg_y /= len(others)
 	dd = math.atan2(avg_y - this.y, avg_x -this.x)
+	if dd < 0: dd += 2*math.pi
 	d = this.angle - dd
 	this.angle -= 0.015 * d
 
