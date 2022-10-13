@@ -3,10 +3,10 @@ class Cell:
 	def __init__(self, x, y):
 		self.x = x
 		self.y = y
+		self.canv_sp = None
 		self.isalive = False
 		self.nexAlive = False
 		self.drawed = False
-		self.canv_sp = None
 
 	def draw(self, canv, scale = 10):
 		color = 'white'
