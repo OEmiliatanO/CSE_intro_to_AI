@@ -22,7 +22,7 @@ def check(Game, row, height, width):
 			Game[i][j].detect(n)
 
 threadn = 5
-def run(Game, canv, width, height, dt = 0.01):
+def run(Game, canv, width, height, dt = 0.001):
 	heightd = height // threadn
 	threads = []
 	for n in range(threadn+1):
@@ -50,7 +50,7 @@ def main():
 	canv.pack()
 
 	Game = []
-	if sys.argv[1] == "random":
+	if len(sys.argv) == 1 or sys.argv[1] == "random":
 		for i in range(height):
 			Game.append([])
 			for j in range(width):
@@ -73,24 +73,7 @@ def main():
 	for i in range(height):
 		for j in range(width):
 			Game[i][j].draw(canv)
-	"""
-	for i in range(height):
-		for j in range(width):
-			n = 0
-			for di, dj in shift:
-				nexi = i + di
-				nexj = j + dj
-				if nexi < 0 or nexi >= height:
-					continue
-				if nexj < 0 or nexj >= width:
-					continue
-				if Game[nexi][nexj].isalive:
-					n += 1
-			Game[i][j].detect(n)
-			if Game[i][j].isalive:
-				print(i, j, n)
-				print(i, j, Game[i][j].nexAlive)
-	"""
+
 	run(Game, canv, width, height)
 	window.mainloop()
 
