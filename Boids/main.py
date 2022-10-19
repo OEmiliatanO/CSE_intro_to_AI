@@ -19,7 +19,7 @@ def alig(this, others):
 	for other in others:
 		avg_ang += other.angle
 	avg_ang /= len(others)
-	this.angle += 0.5 * (avg_ang - this.angle)
+	this.angle += 0.09 * (avg_ang - this.angle)
 
 def cohen(this, others):
 	avg_x = 0
@@ -61,7 +61,7 @@ def main():
 	canv = tkinter.Canvas(window, bg = "black", width = screen_size[0], height = screen_size[1])
 	canv.pack()
 	
-	birds = [Bird("B" + str(i), scope, screen_size) for i in range(n)]
+	birds = [Bird("B" + str(i), scope, 200, screen_size) for i in range(n)]
 	run(birds, canv, dt, screen_size)
 	window.mainloop()
 
