@@ -6,6 +6,14 @@ import time
 
 genome = "ADH"
 
+def random_pick_gene(slist, L):
+	s = ""
+	for slime in slist:
+		s += slime.gene * 2
+	#print(s)
+	#print(len(s), L)
+	return ''.join(random.sample(s, L))
+
 def rand_string(n):
 	s = ""
 	for i in range(n):
@@ -13,7 +21,7 @@ def rand_string(n):
 	return s
 
 class Slime:
-	def __init__(self, name, scope, field = (900, 900)):
+	def __init__(self, name, scope, canv:tkinter.Canvas, field = (900, 900)):
 		random.seed(time.time())
 		self.x = random.randint(10, field[0] - 10)
 		self.y = random.randint(10, field[1] - 10)
@@ -21,21 +29,30 @@ class Slime:
 		self.vy = random.choice([-1, 1]) * 300
 		self.angle = math.atan2(self.vy, self.vx)
 		self.scope = scope
-		self.name = name
-		self.color = "#" + ("%06x" % random.randint(0, 16777215))
-		self.n = random.randint(10, 100)
-		self.gene = rand_string(self.n)
-		self.hp = self.gene.count('H')*10
-		self.defen = self.gene.count('D')
-		self.atk = self.gene.count('A')
 		
-	def draw(self, canv, scale = 11):
+		self.name = name
+		self.canv = canv
+		self.color = "#" + ("%06x" % random.randint(0, 16777215))
+		
+		self.L = random.randint(10, 100)
+		self.gene = rand_string(self.L)
+		self.calattr()
+	
+	def calattr(self):
+		#self.hp = 10*self.gene.count('H') + 1
+		self.hp = 1000//(self.gene.count('H') + 1)
+		self.defen = self.gene.count('D') + 1
+		self.atk = self.gene.count('A') + 1
+		#self.atk = 1000//(self.gene.count('A') + 1)
+		#self.atk = 10**self.gene.count('A') if self.gene.count('A') > 50 else self.gene.count('A') + 1
+
+	def draw(self, scale = 11):
 		self.angle = math.atan2(self.vy, self.vx)
 		arx = self.x + scale * math.cos(self.angle)
 		ary = self.y + scale * math.sin(self.angle)
-		canv.create_line(self.x, self.y, arx, ary, fill = self.color, arrow='last', tag = self.name)
+		self.canv.create_line(self.x, self.y, arx, ary, fill = self.color, arrow='last', tag = self.name)
 
-	def fly(self, canv, dt, boundaryx, boundaryy):
+	def fly(self, dt, boundaryx, boundaryy):
 		speed = math.sqrt(self.vx * self.vx + self.vy * self.vy)
 		minspeed = 400
 		maxspeed = 600
@@ -49,8 +66,12 @@ class Slime:
 		self.y += self.vy * dt
 		self.x %= boundaryx
 		self.y %= boundaryy
-		canv.delete(self.name)
-		self.draw(canv)
-	
+		self.canv.delete(self.name)
+		self.draw()
+
 	def dist(self, other):
 		return math.sqrt((self.x - other.x) * (self.x - other.x) + (self.y - other.y) * (self.y - other.y))
+	def attack(self, other):
+		other.hp -= max(self.atk - other.defen, 0)
+	def destroy(self):
+		self.canv.delete(self.name)
