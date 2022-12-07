@@ -32,19 +32,12 @@ class Slime:
 		
 		self.name = name
 		self.canv = canv
-		self.color = "#" + ("%06x" % random.randint(0, 16777215))
 		
 		self.L = random.randint(10, 100)
 		self.gene = rand_string(self.L)
+		self.reproduction = 0
 		self.calattr()
-	
-	def calattr(self):
-		#self.hp = 10*self.gene.count('H') + 1
-		self.hp = 1000//(self.gene.count('H') + 1)
-		self.defen = self.gene.count('D') + 1
-		self.atk = self.gene.count('A') + 1
-		#self.atk = 1000//(self.gene.count('A') + 1)
-		#self.atk = 10**self.gene.count('A') if self.gene.count('A') > 50 else self.gene.count('A') + 1
+		self.fill_attr_color()
 
 	def draw(self, scale = 11):
 		self.angle = math.atan2(self.vy, self.vx)
@@ -71,7 +64,69 @@ class Slime:
 
 	def dist(self, other):
 		return math.sqrt((self.x - other.x) * (self.x - other.x) + (self.y - other.y) * (self.y - other.y))
+
+	def fill_attr_color(self):
+		self.color = "#" + ("%02x" % int(self.gene.count('A')/self.L*255)) + ("%02x" % int(self.gene.count('H')/self.L*255)) + ("%02x" % int(self.gene.count('D')/self.L*255))
 	def attack(self, other):
-		other.hp -= max(self.atk - other.defen, 0)
+		#other.hp -= max(self.atk - other.defen, 0)
+		other.hp -= self.atk * (other.defen / (other.defen+100))
 	def destroy(self):
 		self.canv.delete(self.name)
+	def calattr(self):
+		self.hp = 10*self.gene.count('H') + 1
+		#self.hp = 1000//(self.gene.count('H') + 1)
+		#self.defen = 1000//(self.gene.count('D') + 1)
+		self.defen = self.gene.count('D') + 1
+		self.atk = self.gene.count('A') + 1
+		#self.atk = 1000//(self.gene.count('A') + 1)
+		#self.atk = 10**self.gene.count('A') if self.gene.count('A') > 50 else self.gene.count('A') + 1
+
+
+"""
+no split
+log 1
+hp  = 1000//(N(H)+1)
+def = N(D)+1
+atk = 10N(A)+1
+
+log 2
+hp  = 15N(H)+1
+def = N(D)+1
+atk = 10N(A)+1
+
+log 3
+hp  = 15N(H)+1
+def = 1000//(N(D)+1)
+atk = 10N(A)+1
+
+log 4
+hp  = 10N(H)+1
+def = N(D)+1
+atk = N(A)+1
+
+log 5
+hp  = 10N(H)+1
+def = N(D)+1
+atk = 10N(A)+1
+
+split 2
+log 6
+hp  = 1000//(N(H)+1)
+def = N(D)+1
+atk = 10N(A)+1
+
+log 7
+hp  = 10N(H)+1
+def = 1000//(N(D)+1)
+atk = 10N(A)+1
+
+log 8
+hp  = 10N(H)+1
+def = N(D)+1
+atk = N(A)+1
+
+log 9
+hp  = N(H)+1
+def = N(D)+1
+atk = N(A)+1
+"""
