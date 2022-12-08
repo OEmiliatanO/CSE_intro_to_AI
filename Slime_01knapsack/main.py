@@ -1,5 +1,6 @@
 from Slime import Slime
 from Slime import random_pick_gene
+from Slime import E
 import tkinter
 import random
 import numpy
@@ -33,6 +34,9 @@ def atk(this, atklist, slimes):
 	global scope
 	global screen_size
 	global canv
+	global wlim
+	global w
+	global val
 	if this == None: return
 	newslimes = slimes.copy()
 	for i in atklist:
@@ -40,16 +44,14 @@ def atk(this, atklist, slimes):
 		if slimes[i].hp <= 0:
 			this.reproduction += 1
 			slimes[i].destroy()
-			"""
-			for j in range(min(2, slimes[i].L//4)):
-				new_slime = Slime("S" + str(num), scope, canv, screen_size)
+			for j in range(min(3, slimes[i].L//4)):
+				new_slime = Slime("S" + str(num), scope, canv, wlim, w, val, screen_size)
 				num += 1
-				new_slime.L = slimes[i].L//(min(2, slimes[i].L//4))
+				new_slime.L = slimes[i].L
 				new_slime.gene = random_pick_gene([slimes[i]], new_slime.L)
-				new_slime.calattr()
+				new_slime.calattr(wlim, w, val)
 				new_slime.fill_attr_color()
 			slimes.append(new_slime)
-			"""
 			slimes[i] = None
 
 def merge(this, mergelist, slimes):
@@ -57,15 +59,18 @@ def merge(this, mergelist, slimes):
 	global scope
 	global screen_size
 	global canv
+	global wlim
+	global w
+	global val
 	if this == None: return
-	newsl = Slime("S" + str(num), scope, canv, screen_size)
+	newsl = Slime("S" + str(num), scope, canv, wlim, w, val, screen_size)
 	num += 1
 	newL = 0
 	for i in mergelist:
 		newL += slimes[i].L
 	newsl.L = newL
 	newsl.gene = random_pick_gene([*map(lambda i: slimes[i], mergelist)], newL)
-	newsl.calattr()
+	newsl.calattr(wlim, w, val)
 	newsl.fill_attr_color()
 	for i in mergelist:
 		slimes[i].destroy()
@@ -78,33 +83,39 @@ def reproduce(this, slimes):
 	global scope
 	global screen_size
 	global canv
+	global wlim
+	global w
+	global val
 	if this == None: return
 	if this.reproduction >= this.L:
 		this.reproduction -= this.L
-		new_slime = Slime("S"+str(num), scope, canv, screen_size)
+		new_slime = Slime("S"+str(num), scope, canv, wlim, w, val, screen_size)
 		num += 1
 		new_slime.L = this.L
 		new_slime.gene = this.gene
-		new_slime.calattr()
+		new_slime.calattr(wlim, w, val)
 		new_slime.fill_attr_color()
 		slimes.append(new_slime)
 
 iter_cnt = 0
+bestV, bestS = 0, ""
 def run(slimes, canv, dt, field, turn_v = 40, margin = 100, sepDist = 30):
 	global iter_cnt
+	global bestV, bestS
 	global flog
+	global wlim
+	global w
+	global val
 	iter_cnt += 1
 	An = Dn = Hn = 0
 	sumL = 0
-	sums = ""
 
 	for i, this in enumerate(slimes):
 		if this == None: continue
-		An += this.gene.count('A')
-		Dn += this.gene.count('D')
-		Hn += this.gene.count('H')
+		An += this.atk
+		Dn += this.defen
+		Hn += this.hp
 		sumL += this.L
-		sums += this.gene
 		avg_vx, avg_vy, avg_x, avg_y, dx, dy, cnt = 0, 0, 0, 0, 0, 0, 0
 		atklist = []
 		mergelist = []
@@ -153,19 +164,22 @@ def run(slimes, canv, dt, field, turn_v = 40, margin = 100, sepDist = 30):
 				this.vy -= turn_v
 	
 	slimes = list(filter(lambda x: x!=None, slimes))
+	for slime in slimes:
+		if bestV < E(wlim, w, val, slime.gene) and sum([(w[i] if slime.gene[i] == '1' else 0) for i in range(0, len(w))]) <= wlim:
+			bestV = E(wlim, w, val, slime.gene)
+			bestS = slime.gene
 	for this in slimes:
 		this.fly(dt, field[0], field[1])
 	#plt.clf()
 	#hist = plt.hist([*sums])
 	#plt.pause(1e-9)
-	print("\033[F\033[F\033[F", end = '')
-	print(f'     A      H      D')
-	print(f'{An:6d} {Hn:6d} {Dn:6d}     {(sumL/len(slimes)):6.3f}     {(len(slimes)):4d}             ')
-	print(f'{(An/sumL):6.3f} {(Hn/sumL):6.3f} {(Dn/sumL):6.3f} {iter_cnt:6d}                                       ')
-
+	print("\033[F\033[F", end = '')
+	print('best select   best val    iter_cnt')
+	print(f'{bestS[:len(w)]}  {bestV:10d}         {iter_cnt:6d}')
 	if iter_cnt % 100 == 0:
-		flog.write(f"{(An/sumL):6.3f} {(Hn/sumL):6.3f} {(Dn/sumL):6.3f} {iter_cnt:6d} {(len(slimes)):4d}\n")
+		flog.write(f'{bestS[:len(w)]} {bestV:10d}\n')
 	if iter_cnt >= 10**5:
+		print(f"\n\nthe best solution is {bestS[:len(w)]}, and the value is {bestV:10d}")
 		quit_win(None)
 
 	canv.after(int(dt * 1000), run, slimes, canv, dt, field)
@@ -182,7 +196,20 @@ def main():
 	global num
 	global canv
 	global flog
+	global w
+	global val
+	global wlim
+	#w = [5,4,7,2,6]
+	w =   [5,4,6,8,9,8, 9,1,6,8,77, 6, 2,6,9,12,89,88,1, 3,6,746,21,5, 4]
+	#val = [12,3,10,3,6]
+	val = [1,3,6,7,1,5,99,5,6,9, 5,66,32,6,6,99, 1, 1,3,45,8,655, 6,5,88]
+	wlim = 100
+	"""
+	log 1 wlim = 15
+	log 2 wlim = 100
+	"""
 	logn = 1
+
 	log = "log"
 	while os.path.isfile(log + str(logn)):
 		logn += 1
@@ -201,7 +228,7 @@ def main():
 	canv = tkinter.Canvas(window, bg = "black", width = screen_size[0], height = screen_size[1])
 	canv.pack()
 	
-	slimes = [Slime("S" + str(i), scope, canv, screen_size) for i in range(n)]
+	slimes = [Slime("S" + str(i), scope, canv, wlim, w, val, screen_size) for i in range(n)]
 	"""
 	ss = ""
 	for s in slimes:

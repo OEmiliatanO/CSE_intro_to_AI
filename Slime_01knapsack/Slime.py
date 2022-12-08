@@ -4,7 +4,7 @@ import numpy
 import random
 import time
 
-genome = "ADH"
+genome = "01"
 
 def random_pick_gene(slist, L):
 	s = ""
@@ -17,11 +17,14 @@ def random_pick_gene(slist, L):
 def rand_string(n):
 	s = ""
 	for i in range(n):
-		s += genome[random.randint(0, 56653) % len(genome)]
+		s += genome[random.randint(0, 65532) % len(genome)]
 	return s
 
+def E(wlim, w, val, gene):
+	return sum([(val[i] if gene[i] == '1' else 0) for i in range(0, len(val))]) - (sum([(w[i] if gene[i] == '1' else 0) for i in range(0, len(w))]) - wlim)
+
 class Slime:
-	def __init__(self, name, scope, canv:tkinter.Canvas, field = (900, 900)):
+	def __init__(self, name, scope, canv:tkinter.Canvas, wlim, w, val, field = (900, 900)):
 		random.seed(time.time())
 		self.x = random.randint(10, field[0] - 10)
 		self.y = random.randint(10, field[1] - 10)
@@ -33,10 +36,10 @@ class Slime:
 		self.name = name
 		self.canv = canv
 		
-		self.L = random.randint(10, 100)
+		self.L = random.randint(26, 100)
 		self.gene = rand_string(self.L)
 		self.reproduction = 0
-		self.calattr()
+		self.calattr(wlim, w, val)
 		self.fill_attr_color()
 
 	def draw(self, scale = 11):
@@ -66,67 +69,22 @@ class Slime:
 		return math.sqrt((self.x - other.x) * (self.x - other.x) + (self.y - other.y) * (self.y - other.y))
 
 	def fill_attr_color(self):
-		self.color = "#" + ("%02x" % int(self.gene.count('A')/self.L*255)) + ("%02x" % int(self.gene.count('H')/self.L*255)) + ("%02x" % int(self.gene.count('D')/self.L*255))
+		#self.color = "#" + ("%02x" % int(self.atk/self.L*255)) + ("%02x" % int(self.gene.count('H')/self.L*255)) + ("%02x" % int(self.gene.count('D')/self.L*255))
+		self.color = "#" + ("%06x" % random.randint(0, 16777215))
 	def attack(self, other):
 		#other.hp -= max(self.atk - other.defen, 0)
-		other.hp -= self.atk * (other.defen / (other.defen+100))
+		if other.defen == 0:
+			other.hp -= self.atk
+		elif other.defen < 0:
+			other.hp -= self.atk * abs(other.defen / (other.defen - 100))
+		else:
+			other.hp -= self.atk * (other.defen / (other.defen+100))
 	def destroy(self):
 		self.canv.delete(self.name)
-	def calattr(self):
-		self.hp = 15*self.gene.count('H') + 1
-		#self.hp = 1000//(self.gene.count('H') + 1)
-		self.defen = 1000//(self.gene.count('D') + 1)
-		#self.defen = self.gene.count('D') + 1
-		self.atk = 10*self.gene.count('A') + 1
-		#self.atk = 1000//(self.gene.count('A') + 1)
-		#self.atk = 10**self.gene.count('A') if self.gene.count('A') > 50 else self.gene.count('A') + 1
-
+	def calattr(self, wlim, w, val):
+		self.hp  = 100 * E(wlim, w, val, self.gene)
+		self.atk = 2 * E(wlim, w, val, self.gene)
+		self.defen = E(wlim, w, val, self.gene)
 
 """
-no split
-log 1 & log 10
-hp  = 1000//(N(H)+1)
-def = N(D)+1
-atk = 10N(A)+1
-
-log 2 & log 11
-hp  = 15N(H)+1
-def = N(D)+1
-atk = 10N(A)+1
-
-log 3 & log 12
-hp  = 15N(H)+1
-def = 1000//(N(D)+1)
-atk = 10N(A)+1
-
-log 4
-hp  = 10N(H)+1
-def = N(D)+1
-atk = N(A)+1
-
-log 5
-hp  = 10N(H)+1
-def = N(D)+1
-atk = 10N(A)+1
-
-split 2
-log 6
-hp  = 1000//(N(H)+1)
-def = N(D)+1
-atk = 10N(A)+1
-
-log 7
-hp  = 10N(H)+1
-def = 1000//(N(D)+1)
-atk = 10N(A)+1
-
-log 8
-hp  = 10N(H)+1
-def = N(D)+1
-atk = N(A)+1
-
-log 9
-hp  = N(H)+1
-def = N(D)+1
-atk = N(A)+1
 """
