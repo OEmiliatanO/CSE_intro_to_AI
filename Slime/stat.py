@@ -2,27 +2,28 @@ import matplotlib.pyplot as plt
 import sys
 
 def main():
-	for num in range(1, 4):
+	for num in range(1, 2):
 		print(f"processing log{num}...")
 		f = open(f"log{num}", "r")
-		
-		S = []
-		val = []
+
+		A = []
+		H = []
+		D = []
 		X = []
 		while True:
 			l = [*f.readline().split()]
-			if len(l) == 1:
-				X.append((len(X) + 1) * 100)
-				val.append(int(l[0]))
-			elif len(l) == 2:
-				X.append((len(X) + 1) * 100)
-				S.append(l[0])
-				val.append(int(l[1]))
-			else:
+			l = [float(x) for x in l]
+			A.append(l[0])
+			H.append(l[1])
+			D.append(l[2])
+			X.append(l[3])
+			if X[-1] >= 100000:
 				break
 
 		plt.figure()
-		plt.plot(X, val, label = 'A', color = 'red')
+		plt.plot(X, A, label = 'A', color = 'red')
+		plt.plot(X, H, label = 'H', color = 'green')
+		plt.plot(X, D, label = 'D', color = 'blue')
 		plt.legend(loc = 'best')
 		plt.savefig(f"log{num}.fig.png")
 		print("saved the fig.\n")

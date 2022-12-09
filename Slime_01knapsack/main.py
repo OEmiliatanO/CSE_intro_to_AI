@@ -97,6 +97,30 @@ def reproduce(this, slimes):
 		new_slime.fill_attr_color()
 		slimes.append(new_slime)
 
+def mutation(this):
+	global wlim, w, val
+	if this == None: return
+	# translocation
+	if random.randint(0, 10000) < 20:
+		random.shuffle((L:=[*this.gene[:len(w)]]))
+		this.gene = "".join(L)
+		this.calattr(wlim, w, val)
+	
+	# point mutation
+	"""
+	for i in range(len(this.gene)):
+		if random.randint(0, 10000) < 20:
+			this.gene = this.gene[:i] + ("1" if this.gene[i] == "0" else "0") + this.gene[i+1:]
+	"""
+
+	# inversion mutation
+	"""
+	a = random.randint(0, 65532) % len(this.gene)
+	b = random.randint(0, 65532) % len(this.gene)
+	if a > b: a,b = b,a
+	this.gene = this.gene[:a] + "".join(reversed([*this.gene[a:b+1]])) + this.gene[b+1:]
+	"""
+
 iter_cnt = 0
 bestV, bestS = 0, ""
 def run(slimes, canv, dt, field, turn_v = 40, margin = 100, sepDist = 30):
@@ -152,6 +176,7 @@ def run(slimes, canv, dt, field, turn_v = 40, margin = 100, sepDist = 30):
 			mergelist.append(i)
 			merge(this, mergelist, slimes)
 			reproduce(this, slimes)
+			mutation(this)
 			bias(this, bias_v = 0.1)
 			if this == None: continue
 			if this.x < margin:
@@ -165,8 +190,9 @@ def run(slimes, canv, dt, field, turn_v = 40, margin = 100, sepDist = 30):
 	
 	slimes = list(filter(lambda x: x!=None, slimes))
 	for slime in slimes:
-		if bestV < E(wlim, w, val, slime.gene) and sum([(w[i] if slime.gene[i] == '1' else 0) for i in range(0, len(w))]) <= wlim:
-			bestV = E(wlim, w, val, slime.gene)
+		totval = sum([(val[i] if slime.gene[i] == '1' else 0) for i in range(0, len(val))])
+		if bestV < totval and sum([(w[i] if slime.gene[i] == '1' else 0) for i in range(0, len(w))]) <= wlim:
+			bestV = totval
 			bestS = slime.gene
 	for this in slimes:
 		this.fly(dt, field[0], field[1])
@@ -199,14 +225,27 @@ def main():
 	global w
 	global val
 	global wlim
-	#w = [5,4,7,2,6]
-	w =   [5,4,6,8,9,8, 9,1,6,8,77, 6, 2,6,9,12,89,88,1, 3,6,746,21,5, 4]
-	#val = [12,3,10,3,6]
-	val = [1,3,6,7,1,5,99,5,6,9, 5,66,32,6,6,99, 1, 1,3,45,8,655, 6,5,88]
-	wlim = 100
+	n, wlim = input().split()
+	n, wlim = int(n), int(wlim)
+	w, val = [], []
+	for x in input().split():
+		w.append(int(x))
+	for x in input().split():
+		val.append(int(x))
+	print(n, wlim)
+	print(w)
+	print(val)
 	"""
-	log 1 wlim = 15
-	log 2 wlim = 100
+	no mutation
+	log 1 test1
+	log 2 test2
+	log 3 test3
+	log 4 test4
+	mutation
+	log 5 test1
+	log 6 test2
+	log 7 test3
+	log 8 test4
 	"""
 	logn = 1
 
