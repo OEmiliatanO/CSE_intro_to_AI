@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import sys
 
 def main():
-	for num in range(1, 4):
+	for num in range(1, 9):
 		print(f"processing log{num}...")
 		f = open(f"log{num}", "r")
 		
