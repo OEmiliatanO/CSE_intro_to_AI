@@ -69,7 +69,8 @@ class Slime:
 		self.color = "#" + ("%02x" % int(self.gene.count('A')/self.L*255)) + ("%02x" % int(self.gene.count('H')/self.L*255)) + ("%02x" % int(self.gene.count('D')/self.L*255))
 	def attack(self, other):
 		#other.hp -= max(self.atk - other.defen, 0)
-		other.hp -= self.atk * (other.defen / (other.defen+100))
+		#other.hp -= self.atk * (other.defen / (other.defen+100))
+		other.hp -= (self.atk + other.gene.count("H") * 0.15) * (other.defen/ (other.defen+100))
 	def destroy(self):
 		self.canv.delete(self.name)
 	def calattr(self):
@@ -139,4 +140,28 @@ log 13
 hp  = N(H)+1
 def = N(D)+1
 atk = 200N(A)+1
+
+atk based on current 0.05 hp
+log 14
+hp  = N(H)+1
+def = N(D)+1
+atk = N(A)+1
+
+atk based on max 0.05 hp
+log 15
+hp  = N(H)+1
+def = N(D)+1
+atk = N(A)+1
+
+atk based on current 0.15 hp
+log 16
+hp  = N(H)+1
+def = N(D)+1
+atk = N(A)+1
+
+atk based on max 0.15 hp
+log 17
+hp  = N(H)+1
+def = N(D)+1
+atk = N(A)+1
 """
