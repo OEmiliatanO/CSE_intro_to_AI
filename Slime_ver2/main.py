@@ -22,9 +22,9 @@ def cohen(this, avg_x, avg_y, cohenW = 0.03):
 	this.vx += (avg_x - this.x) * cohenW
 	this.vy += (avg_y - this.y) * cohenW
 
-def bias(this, bias_v = 0.04):
+def bias(this, bias_v = 0.9):
 	if this == None: return
-	if numpy.random.randint(0, 100) >= 50:
+	if numpy.random.randint(0, 100) >= 10:
 		this.vx = (1 - bias_v) * this.vx + bias_v * random.choice([-1, 1])
 		this.vy = (1 - bias_v) * this.vy + bias_v * random.choice([-1, 1])
 
@@ -40,16 +40,14 @@ def atk(this, atklist, slimes):
 		if slimes[i].hp <= 0:
 			this.reproduction += 1
 			slimes[i].destroy()
-			"""
-			for j in range(min(2, slimes[i].L//4)):
+			for j in range(min(2, slimes[i].L//2)):
 				new_slime = Slime("S" + str(num), scope, canv, screen_size)
 				num += 1
-				new_slime.L = slimes[i].L//(min(2, slimes[i].L//4))
+				new_slime.L = slimes[i].L//(min(2, slimes[i].L//2))
 				new_slime.gene = random_pick_gene([slimes[i]], new_slime.L)
 				new_slime.calattr()
 				new_slime.fill_attr_color()
 			slimes.append(new_slime)
-			"""
 			slimes[i] = None
 
 def merge(this, mergelist, slimes):
@@ -88,6 +86,16 @@ def reproduce(this, slimes):
 		new_slime.calattr()
 		new_slime.fill_attr_color()
 		slimes.append(new_slime)
+		"""
+		for i in range(2):
+			new_slime = Slime("S"+str(num), scope, canv, screen_size)
+			num += 1
+			new_slime.L = this.L
+			new_slime.gene = this.gene
+			new_slime.calattr()
+			new_slime.fill_attr_color()
+			slimes.append(new_slime)
+		"""
 
 iter_cnt = 0
 def run(slimes, canv, dt, field, turn_v = 40, margin = 100, sepDist = 30):
@@ -141,7 +149,7 @@ def run(slimes, canv, dt, field, turn_v = 40, margin = 100, sepDist = 30):
 			mergelist.append(i)
 			merge(this, mergelist, slimes)
 			reproduce(this, slimes)
-			bias(this, bias_v = 0.1)
+			bias(this, bias_v = 0.04)
 			if this == None: continue
 			if this.x < margin:
 				this.vx += turn_v

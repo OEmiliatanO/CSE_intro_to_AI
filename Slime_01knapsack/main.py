@@ -102,7 +102,7 @@ def mutation(this):
 	if this == None: return
 	# translocation
 	if random.randint(0, 10000) < 20:
-		random.shuffle((L:=[*this.gene[:len(w)]]))
+		random.shuffle((L:=[*this.gene]))
 		this.gene = "".join(L)
 		this.calattr(wlim, w, val)
 	
@@ -241,11 +241,21 @@ def main():
 	log 2 test2
 	log 3 test3
 	log 4 test4
-	mutation
+	translocation mutation
 	log 5 test1
 	log 6 test2
 	log 7 test3
 	log 8 test4
+	point mutation
+	log 9  test1
+	log 10 test2
+	log 11 test3
+	log 12 test4
+	inversion mutation
+	log 13 test1
+	log 14 test2
+	log 15 test3
+	log 16 test4
 	"""
 	logn = 1
 

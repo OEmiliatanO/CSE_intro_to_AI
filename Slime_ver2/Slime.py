@@ -73,11 +73,11 @@ class Slime:
 	def destroy(self):
 		self.canv.delete(self.name)
 	def calattr(self):
-		self.hp = 15*self.gene.count('H') + 1
+		self.hp = self.gene.count('H') + 1
 		#self.hp = 1000//(self.gene.count('H') + 1)
-		self.defen = 1000//(self.gene.count('D') + 1)
-		#self.defen = self.gene.count('D') + 1
-		self.atk = 10*self.gene.count('A') + 1
+		#self.defen = 1000//(self.gene.count('D') + 1)
+		self.defen = self.gene.count('D') + 1
+		self.atk = self.gene.count('A') + 1
 		#self.atk = 1000//(self.gene.count('A') + 1)
 		#self.atk = 10**self.gene.count('A') if self.gene.count('A') > 50 else self.gene.count('A') + 1
 
@@ -94,7 +94,7 @@ hp  = 15N(H)+1
 def = N(D)+1
 atk = 10N(A)+1
 
-log 3 & log 12
+log 3
 hp  = 15N(H)+1
 def = 1000//(N(D)+1)
 atk = 10N(A)+1
@@ -129,4 +129,14 @@ log 9
 hp  = N(H)+1
 def = N(D)+1
 atk = N(A)+1
+
+log 12
+hp  = N(H)+1
+def = N(D)+1
+atk = 50N(A)+1
+
+log 13
+hp  = N(H)+1
+def = N(D)+1
+atk = 200N(A)+1
 """
