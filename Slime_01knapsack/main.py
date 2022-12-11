@@ -101,17 +101,17 @@ def mutation(this):
 	global wlim, w, val
 	if this == None: return
 	# translocation
+	"""
 	if random.randint(0, 10000) < 20:
 		random.shuffle((L:=[*this.gene]))
 		this.gene = "".join(L)
 		this.calattr(wlim, w, val)
-	
-	# point mutation
 	"""
+
+	# point mutation
 	for i in range(len(this.gene)):
 		if random.randint(0, 10000) < 20:
 			this.gene = this.gene[:i] + ("1" if this.gene[i] == "0" else "0") + this.gene[i+1:]
-	"""
 
 	# inversion mutation
 	"""
