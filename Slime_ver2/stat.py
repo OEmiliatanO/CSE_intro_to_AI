@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import sys
 
 def main():
-	for num in range(1, 18):
+	for num in range(1, 19):
 		print(f"processing log{num}...")
 		f = open(f"log{num}", "r")
 
@@ -13,6 +13,7 @@ def main():
 		while True:
 			l = [*f.readline().split()]
 			l = [float(x) for x in l]
+			if len(l) == 0: break
 			A.append(l[0])
 			H.append(l[1])
 			D.append(l[2])

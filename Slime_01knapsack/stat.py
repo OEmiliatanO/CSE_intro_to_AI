@@ -2,10 +2,10 @@ import matplotlib.pyplot as plt
 import sys
 
 def main():
-	for num in range(5, 9):
+	for num in range(1, 5):
 		print(f"processing log{num}...")
 		f = open(f"log{num}", "r")
-		ansf = open(f"ans{(num-4)}", "r")
+		ansf = open(f"ans{(num)}", "r")
 		
 		S = []
 		val = []
