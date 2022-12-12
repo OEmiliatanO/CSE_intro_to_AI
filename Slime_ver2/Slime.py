@@ -70,7 +70,10 @@ class Slime:
 	def attack(self, other):
 		#other.hp -= max(self.atk - other.defen, 0)
 		#other.hp -= self.atk * (other.defen / (other.defen+100))
-		other.hp -= (self.atk + other.hp * 0.4) * (other.defen/ (other.defen+100))
+		if self.atk >= 50:
+			other.hp -= (self.atk + other.gene.count('H') * 0.15) * (other.defen/ (other.defen+100))
+		else:
+			other.hp -= self.atk * other.defen / (other.defen+100)
 	def destroy(self):
 		self.canv.delete(self.name)
 	def calattr(self):
@@ -167,6 +170,12 @@ atk = N(A)+1
 
 atk based on current 0.4 hp
 log 18
+hp  = N(H)+1
+def = N(D)+1
+atk = N(A)+1
+
+atk based on current 0.15 hp if N(A)>=50
+log 19
 hp  = N(H)+1
 def = N(D)+1
 atk = N(A)+1
